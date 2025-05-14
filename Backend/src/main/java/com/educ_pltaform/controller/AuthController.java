@@ -8,14 +8,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,36 +25,43 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // Inscription
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
         try {
-            // Create the User object from the request
             User newUser = new User(request.getNom(), request.getPrenom(), request.getEmail(), request.getMotDePasse());
-
-            // Call the service method to register the user and return a ResponseEntity
             return authService.registerUser(newUser);
-
         } catch (Exception e) {
-            // If something goes wrong, return a ResponseEntity with a 500 status code
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erreur lors de l'inscription de l'utilisateur");
+                    .body("Erreur lors de l'inscription de l'utilisateur : " + e.getMessage());
         }
     }
 
-    // Connexion
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody Map<String, String> loginData) {
         String email = loginData.get("email");
         String motDePasse = loginData.get("motDePasse");
 
-        // Use UserRepository to call findByEmail
         Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent() && passwordEncoder.matches(motDePasse, user.get().getPassword())) {
-            return ResponseEntity.ok("Connexion réussie !");
+        if (user.isPresent()) {
+            // Déboguer: ajoutez des logs pour vérifier les valeurs
+            System.out.println("Email trouvé: " + email);
+            System.out.println("Mot de passe fourni: " + motDePasse);
+            System.out.println("Mot de passe hashé en BDD: " + user.get().getPassword());
+
+            boolean matches = passwordEncoder.matches(motDePasse, user.get().getPassword());
+            System.out.println("Résultat de la comparaison: " + matches);
+
+            if (matches) {
+                return ResponseEntity.ok("Connexion réussie !");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou mot de passe incorrect !");
+            }
         }
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou mot de passe incorrect !");
     }
 }

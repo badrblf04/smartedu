@@ -25,15 +25,12 @@ public class User {
 
     // Constructeur sans ID, pour les nouveaux utilisateurs
 
-    public User(String password, String email, String prenom, String nom) {
-        this.password = password;
-        this.email = email;
-        this.prenom = prenom;
+    public User(String nom, String prenom, String email, String password) {
         this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.password = password;
     }
-
-
-    // Constructeur avec 4 paramètres
 
     // Getters et setters
     public Long getId() {
@@ -74,5 +71,16 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", email='" + email + '\'' +
+                ", password='[PROTECTED]'" + // Ne pas afficher le mot de passe dans les logs
+                '}';
     }
 }

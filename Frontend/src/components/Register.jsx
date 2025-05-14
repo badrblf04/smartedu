@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Register.css'; // Assurez-vous d'importer le CSS
 
 const Register = () => {
     const [form, setForm] = useState({
@@ -16,22 +17,18 @@ const Register = () => {
     // Validation du formulaire
     const validateForm = () => {
         const newErrors = {};
-
         if (!form.nom.trim()) newErrors.nom = "Le nom est requis";
         if (!form.prenom.trim()) newErrors.prenom = "Le prénom est requis";
-
         if (!form.email.trim()) {
             newErrors.email = "L'email est requis";
         } else if (!/\S+@\S+\.\S+/.test(form.email)) {
             newErrors.email = "L'email n'est pas valide";
         }
-
         if (!form.motDePasse.trim()) {
             newErrors.motDePasse = "Le mot de passe est requis";
         } else if (form.motDePasse.length < 8) {
             newErrors.motDePasse = "Le mot de passe doit contenir au moins 8 caractères";
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -84,88 +81,69 @@ const Register = () => {
     };
 
     return (
-        <div className="w-full max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Créer un compte</h2>
+        <div className="register-container">
+            <h2>Créer un compte</h2>
+            <p>Veuillez remplir le formulaire ci-dessous pour vous inscrire.</p>
 
             {success ? (
-                <div className="bg-green-100 p-4 mb-6 rounded-md text-green-700">
-                    <p className="font-medium">Inscription réussie !</p>
+                <div className="success-message">
+                    <p>Inscription réussie !</p>
                     <p>Vous pouvez maintenant vous connecter avec vos identifiants.</p>
                 </div>
             ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {apiError && (
-                        <div className="bg-red-100 p-3 rounded text-red-700 text-sm mb-4">
-                            {apiError}
-                        </div>
-                    )}
+                <form onSubmit={handleSubmit}>
+                    {apiError && <div className="error-message">{apiError}</div>}
 
-                    <div>
-                        <label htmlFor="nom" className="block text-sm font-medium text-gray-700 mb-1">
-                            Nom
-                        </label>
+                    <div className="field">
+                        <label htmlFor="nom">Nom</label>
                         <input
                             type="text"
                             id="nom"
                             name="nom"
                             value={form.nom}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.nom ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {errors.nom && <p className="mt-1 text-sm text-red-600">{errors.nom}</p>}
+                        {errors.nom && <p className="error-text">{errors.nom}</p>}
                     </div>
 
-                    <div>
-                        <label htmlFor="prenom" className="block text-sm font-medium text-gray-700 mb-1">
-                            Prénom
-                        </label>
+                    <div className="field">
+                        <label htmlFor="prenom">Prénom</label>
                         <input
                             type="text"
                             id="prenom"
                             name="prenom"
                             value={form.prenom}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.prenom ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {errors.prenom && <p className="mt-1 text-sm text-red-600">{errors.prenom}</p>}
+                        {errors.prenom && <p className="error-text">{errors.prenom}</p>}
                     </div>
 
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                            Email
-                        </label>
+                    <div className="field">
+                        <label htmlFor="email">Email</label>
                         <input
                             type="email"
                             id="email"
                             name="email"
                             value={form.email}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                        {errors.email && <p className="error-text">{errors.email}</p>}
                     </div>
 
-                    <div>
-                        <label htmlFor="motDePasse" className="block text-sm font-medium text-gray-700 mb-1">
-                            Mot de passe
-                        </label>
+                    <div className="field">
+                        <label htmlFor="motDePasse">Mot de passe</label>
                         <input
                             type="password"
                             id="motDePasse"
                             name="motDePasse"
                             value={form.motDePasse}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.motDePasse ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {errors.motDePasse && <p className="mt-1 text-sm text-red-600">{errors.motDePasse}</p>}
+                        {errors.motDePasse && <p className="error-text">{errors.motDePasse}</p>}
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
-                    >
-                        {loading ? 'Inscription en cours...' : "S'inscrire"}
+                    <button type="submit" disabled={loading}>
+                        {loading ? "Inscription en cours..." : "S'inscrire"}
                     </button>
                 </form>
             )}

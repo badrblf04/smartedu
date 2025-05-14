@@ -1,10 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // Use the new 'react-dom/client' package
+import ReactDOM from 'react-dom/client';
 import App from './App';
+import { AuthProvider } from './context/AuthContext'; // ← Import du contexte
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Create a root
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <App />
+        <AuthProvider> {/* ← Encapsule App */}
+            <App />
+        </AuthProvider>
     </React.StrictMode>
 );

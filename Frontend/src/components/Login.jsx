@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Login.css'; // 👈 Import du CSS personnalisé
 
 const Login = () => {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         email: '',
         motDePasse: ''
@@ -22,15 +25,29 @@ const Login = () => {
             const response = await fetch('http://localhost:8080/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form) // envoie { email, motDePasse }
+                body: JSON.stringify(form)
             });
 
-            const message = await response.text();
+            const contentType = response.headers.get("content-type");
+            let data;
+            if (contentType && contentType.includes("application/json")) {
+                data = await response.json();
+            } else {
+                const message = await response.text();
+                data = { message };
+            }
 
-            if (!response.ok) throw new Error(message);
+            if (!response.ok) throw new Error(data.message || "Erreur de connexion");
 
-            setSuccess(message); // Connexion réussie
+            localStorage.setItem('userToken', data.token);
+            localStorage.setItem('userName', data.userName || data.nom || form.email.split('@')[0]);
+
+            setSuccess("Connexion réussie !");
             setForm({ email: '', motDePasse: '' });
+
+            setTimeout(() => {
+                navigate('/');
+            }, 1000);
 
         } catch (err) {
             setError(err.message || "Erreur de connexion.");
@@ -38,45 +55,31 @@ const Login = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded">
-            <h2 className="text-xl font-bold mb-4 text-center">Connexion</h2>
+        <div className="login-container">
+            <h2>Bienvenue</h2>
+            <p>Connectez-vous à votre compte</p>
 
-            {success && <div className="text-green-600 mb-4">{success}</div>}
-            {error && <div className="text-red-600 mb-4">{error}</div>}
+            {success && <div className="success-message">{success}</div>}
+            {error && <div className="error-message">{error}</div>}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label htmlFor="email" className="block mb-1 text-sm">Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 rounded"
-                    />
-                </div>
-
-                <div>
-                    <label htmlFor="motDePasse" className="block mb-1 text-sm">Mot de passe</label>
-                    <input
-                        type="password"
-                        name="motDePasse"
-                        id="motDePasse"
-                        value={form.motDePasse}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 rounded"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-                >
-                    Se connecter
-                </button>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="password"
+                    name="motDePasse"
+                    placeholder="Mot de passe"
+                    value={form.motDePasse}
+                    onChange={handleChange}
+                    required
+                />
+                <button type="submit">Se connecter</button>
             </form>
         </div>
     );

@@ -347,4 +347,89 @@ button {
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  /* Ajoutez ces styles à votre App.css */
+
+  /* Style pour le message de bienvenue */
+  .welcome-message {
+    padding: 0.5rem 1rem;
+    color: #4CAF50;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Animation pour le message de bienvenue */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .welcome-message {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  /* Styles responsives pour le message de bienvenue */
+  @media (max-width: 768px) {
+    .welcome-message {
+      padding: 0.75rem;
+      text-align: center;
+      justify-content: center;
+    }
+  }
+
+  /* Style pour le bouton de déconnexion */
+  button.nav-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 8px 16px;
+  }
+
+  /* Styles pour l'authentification dans le Dashboard */
+  .auth-prompt {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .auth-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .auth-button {
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .auth-button.login {
+    background-color: #2196F3;
+    color: white;
+  }
+
+  .auth-button.login:hover {
+    background-color: #0b7dda;
+  }
+
+  .auth-button.register {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  .auth-button.register:hover {
+    background-color: #3e8e41;
+  }
 }

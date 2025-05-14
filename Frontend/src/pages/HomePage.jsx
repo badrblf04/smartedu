@@ -7,6 +7,7 @@ const HomePage = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [userName, setUserName] = useState('');
+    const [showWelcome, setShowWelcome] = useState(false);
 
     useEffect(() => {
         // Simuler un chargement pour l'animation
@@ -18,6 +19,10 @@ const HomePage = () => {
         const storedUserName = localStorage.getItem('userName');
         if (storedUserName) {
             setUserName(storedUserName);
+            // Ajouter un délai pour l'animation du message de bienvenue
+            setTimeout(() => {
+                setShowWelcome(true);
+            }, 1500);
         }
 
         return () => clearTimeout(timer);
@@ -39,24 +44,22 @@ const HomePage = () => {
                                 <span className="title-part highlight">Education</span>
                             </h1>
                             {userName && (
-                                <div className="welcome-message">
+                                <div className={`welcome-message ${showWelcome ? 'welcome-visible' : ''}`}>
                                     <p>Bonjour, <span className="user-name">{userName}</span> !</p>
+                                    <p className="welcome-subtitle">Ravi de vous revoir sur votre plateforme d'apprentissage.</p>
                                 </div>
                             )}
                             <p className="header-subtitle">Apprenez intelligemment, progressez efficacement</p>
                         </div>
-
                         <div className="header-illustration">
                             <div className="shape shape-1"></div>
                             <div className="shape shape-2"></div>
                             <div className="shape shape-3"></div>
                         </div>
                     </header>
-
                     <main className="main-content">
                         <Dashboard />
                     </main>
-
                     <section className="features-section">
                         <h2>Pourquoi choisir Smart Education ?</h2>
                         <div className="features-grid">

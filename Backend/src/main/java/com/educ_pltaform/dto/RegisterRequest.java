@@ -1,13 +1,25 @@
 package com.educ_pltaform.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+
 /**
  * Classe DTO (Data Transfer Object) pour la requête d'inscription
  * Sert à mapper les données JSON envoyées depuis le frontend
  */
 public class RegisterRequest {
+
+    @NotEmpty(message = "Le nom ne peut pas être vide.")
     private String nom;
+
+    @NotEmpty(message = "Le prénom ne peut pas être vide.")
     private String prenom;
+
+    @NotEmpty(message = "L'email ne peut pas être vide.")
+    @Email(message = "L'email doit être valide.")
     private String email;
+
+    @NotEmpty(message = "Le mot de passe ne peut pas être vide.")
     private String motDePasse;
 
     // Constructeur par défaut (nécessaire pour la désérialisation JSON)
@@ -22,7 +34,7 @@ public class RegisterRequest {
         this.motDePasse = motDePasse;
     }
 
-    // Getters et setters (nécessaires pour Jackson/JSON)
+    // Getters et setters
     public String getNom() {
         return nom;
     }

@@ -1,19 +1,40 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Login from './components/Login';
 import Register from './components/Register';
 import QuizPage from './pages/QuizPage';
 import SummaryPage from './pages/SummaryPage';
 import ProblemPage from './pages/ProblemPage';
+import Dashboard from './components/Dashboard';
 import logo from './img/download.png';
 import './App.css';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  // Vérification de l'authentification lors du chargement de l'app
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    const name = localStorage.getItem('userName');
+
+    if (token) {
+      setIsAuthenticated(true);
+      setUserName(name || 'Utilisateur');
+    }
+  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userName');
+    setIsAuthenticated(false);
+    setUserName('');
   };
 
   return (
@@ -37,8 +58,22 @@ function App() {
                 <li><Link to="/" className="nav-link">Accueil</Link></li>
                 <li><Link to="/quiz" className="nav-link">Quiz</Link></li>
                 <li><Link to="/problem" className="nav-link">Problèmes</Link></li>
-                <li><Link to="/login" className="nav-link highlight">Connexion</Link></li>
-                <li><Link to="/register" className="nav-link highlight secondary">Inscription</Link></li>
+
+                {isAuthenticated ? (
+                    <>
+                      <li className="welcome-message">Bienvenue, {userName}</li>
+                      <li>
+                        <button onClick={handleLogout} className="nav-link highlight secondary">
+                          Déconnexion
+                        </button>
+                      </li>
+                    </>
+                ) : (
+                    <>
+                      <li><Link to="/login" className="nav-link highlight">Connexion</Link></li>
+                      <li><Link to="/register" className="nav-link highlight secondary">Inscription</Link></li>
+                    </>
+                )}
               </ul>
             </nav>
           </header>
@@ -52,6 +87,10 @@ function App() {
               <Route path="/problem" element={<ProblemPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              {/* Redirection si déjà connecté */}
+              <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
+              <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />} />
             </Routes>
           </main>
 

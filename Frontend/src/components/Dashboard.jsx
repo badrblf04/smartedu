@@ -1,22 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
 const Dashboard = () => {
     // État pour l'animation des cartes
-    const [activeCard, setActiveCard] = React.useState(null);
+    const [activeCard, setActiveCard] = useState(null);
     const navigate = useNavigate();
 
-    // Vérification de l'authentification
-    const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+    // État d'authentification et informations utilisateur
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userName, setUserName] = useState('');
 
-    React.useEffect(() => {
-        // Vérification de l'état de connexion
+    useEffect(() => {
         const userToken = localStorage.getItem('userToken');
+        const name = localStorage.getItem('userName');
+
         if (userToken) {
             setIsAuthenticated(true);
+            setUserName(name || 'Utilisateur');  // Assure-toi de définir le nom de l'utilisateur
+        } else {
+            // Si l'utilisateur n'est pas connecté, redirige vers la page de connexion
+            navigate('/login');
         }
-    }, []);
+    }, [navigate]);
+
 
     // Données pour les cartes
     const cards = [
@@ -54,7 +61,17 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            <h1 className="dashboard-title">Apprenez à votre rythme</h1>
+            {isAuthenticated && (
+                <div className="user-greeting">
+                    <h1 className="dashboard-title">Bienvenue, {userName}</h1>
+                    <p className="dashboard-subtitle">Votre parcours d'apprentissage vous attend</p>
+                </div>
+            )}
+
+            {!isAuthenticated && (
+                <h1 className="dashboard-title">Apprenez à votre rythme</h1>
+            )}
+
             <p className="dashboard-subtitle">Sélectionnez une activité pour commencer votre parcours d'apprentissage</p>
 
             <div className="cards-container">
